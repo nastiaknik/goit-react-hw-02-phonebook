@@ -1,11 +1,8 @@
 import PropTypes from 'prop-types';
 import { ContactItem } from '../ContactItem/ContactItem';
-import {
-  Table,
-  /* TableHead, */
-} from './ContactList.styled';
+import { Table /* TableHead */ } from './ContactList.styled';
 
-export const ContactList = ({ contacts, onDelete }) => {
+export const ContactList = ({ contacts, onDelete, onFavorite, favourites }) => {
   return (
     <Table>
       {/* <thead>
@@ -19,7 +16,12 @@ export const ContactList = ({ contacts, onDelete }) => {
         </tr>
       </thead> */}
       <tbody>
-        <ContactItem contacts={contacts} onDelete={onDelete} />
+        <ContactItem
+          contacts={contacts}
+          onDelete={onDelete}
+          onFavorite={onFavorite}
+          favourites={favourites}
+        />
       </tbody>
     </Table>
   );
@@ -33,4 +35,7 @@ ContactList.propTypes = {
       id: PropTypes.string.isRequired,
     })
   ),
+  onDelete: PropTypes.func.isRequired,
+  onFavorite: PropTypes.func.isRequired,
+  favourites: PropTypes.array.isRequired,
 };

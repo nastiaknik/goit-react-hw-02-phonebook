@@ -6,7 +6,7 @@ export const ContactFilter = ({ onFilter, value }) => {
   return (
     <FilterContainer>
       <label htmlFor="filter">
-        <FiSearch size={16} />
+        <FiSearch size={20} />
       </label>
       <FilterInput
         id="filter"

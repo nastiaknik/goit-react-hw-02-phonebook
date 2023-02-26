@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Layout } from 'components/Layout/Layout';
 import { Section } from 'components/Section/Section';
 import { ContactForm } from './ContactForm/ContactForm';
@@ -14,6 +15,7 @@ export class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
+    favourites: [],
   };
 
   addContact = contact => {
@@ -22,7 +24,7 @@ export class App extends Component {
         return item.name === contact.name;
       })
     ) {
-      alert('This contact already exist!');
+      Notify.warning('Contact with this name already exist!');
       return;
     }
     if (
@@ -30,18 +32,34 @@ export class App extends Component {
         return item.number === contact.number;
       })
     ) {
-      alert('This number is already added');
+      Notify.warning('This number is already in base!');
       return;
     }
     this.setState(({ contacts }) => ({
       contacts: [...contacts, contact],
     }));
+    Notify.success('Contact added!');
   };
 
   deleteContact = contactId => {
     this.setState(({ contacts }) => ({
       contacts: contacts.filter(({ id }) => id !== contactId),
     }));
+    Notify.success('Contact deleted!');
+  };
+
+  addContactToFav = contact => {
+    if (this.state.favourites.includes(contact)) {
+      this.setState(({ favourites }) => ({
+        favourites: favourites.filter(({ id }) => id !== contact.id),
+      }));
+      Notify.success('Contact removed from favourites!');
+      return;
+    }
+    this.setState(({ favourites }) => ({
+      favourites: [...favourites, contact],
+    }));
+    Notify.success('Contact added to favourites!');
   };
 
   handleSetFilterValue = ({ target: { name, value } }) => {
@@ -51,11 +69,33 @@ export class App extends Component {
   };
 
   handleFilterContact = () => {
-    return this.state.contacts.filter(contact => {
-      return contact.name
-        .toLowerCase()
-        .includes(this.state.filter.toLowerCase().trim());
-    });
+    if (
+      this.state.contacts.filter(contact => {
+        return (
+          contact.name
+            .toLowerCase()
+            .includes(this.state.filter.toLowerCase().trim()) ||
+          contact.number.includes(this.state.filter.trim())
+        );
+      }).length === 0
+    ) {
+      Notify.failure('Sorry, there are no contact matching your search. :(', {
+        showOnlyTheLastOne: true,
+      });
+    }
+
+    return this.state.contacts
+      .filter(contact => {
+        return (
+          contact.name
+            .toLowerCase()
+            .includes(this.state.filter.toLowerCase().trim()) ||
+          contact.number.includes(this.state.filter.trim())
+        );
+      })
+      .sort((firstContact, secondContact) =>
+        firstContact.name.localeCompare(secondContact.name)
+      );
   };
 
   render() {
@@ -64,7 +104,6 @@ export class App extends Component {
         <Section title="Phonebook">
           <ContactForm onSubmit={this.addContact} />
         </Section>
-
         {this.state.contacts.length > 0 && (
           <Section title="Contacts">
             <ContactFilter
@@ -74,6 +113,8 @@ export class App extends Component {
             <ContactList
               contacts={this.handleFilterContact()}
               onDelete={this.deleteContact}
+              onFavorite={this.addContactToFav}
+              favourites={this.state.favourites}
             />
           </Section>
         )}

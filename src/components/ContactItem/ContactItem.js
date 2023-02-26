@@ -1,35 +1,45 @@
 import PropTypes from 'prop-types';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { IoIosCall } from 'react-icons/io';
+import { BsStar } from 'react-icons/bs';
+import { BsStarFill } from 'react-icons/bs';
 import { getInitials } from '../../utils/getInitials';
 import { getRandomColor } from '../../utils/getRandomColor';
 import {
   TableRow,
+  Avatar,
   NameCeil,
   NumberCeil,
   ActionCeil,
-  Avatar,
   Button,
   Link,
 } from './ContactItem.styled';
 
-export const ContactItem = ({ contacts, onDelete }) => {
-  return contacts.map(({ id, name, number }) => {
+export const ContactItem = ({ contacts, onDelete, onFavorite, favourites }) => {
+  return contacts.map(contact => {
     return (
-      <TableRow key={id}>
+      <TableRow key={contact.id}>
         <NameCeil>
-          <Avatar style={getRandomColor()}>{getInitials(name)}</Avatar>
-          {name}
+          <Avatar style={getRandomColor()}>{getInitials(contact.name)}</Avatar>
+          {contact.name}
         </NameCeil>
-        <NumberCeil>{number}</NumberCeil>
+        <NumberCeil>{contact.number}</NumberCeil>
         <ActionCeil>
-          <Link href={`tel: ${number}`}>
+          <Button type="button" onClick={() => onFavorite(contact)}>
+            {favourites.includes(contact) ? (
+              <BsStarFill size={24} color="#ffd800" />
+            ) : (
+              <BsStar size={24} color="#ffd800" />
+            )}
+          </Button>
+
+          <Link href={`tel: ${contact.number}`}>
             <IoIosCall size={24} color="green" />
           </Link>
           <Button
             type="button"
             onClick={() => {
-              onDelete(id);
+              onDelete(contact.id);
             }}
           >
             <RiDeleteBinLine size={24} color="red" />
@@ -48,4 +58,7 @@ ContactItem.propTypes = {
       id: PropTypes.string.isRequired,
     })
   ),
+  onDelete: PropTypes.func.isRequired,
+  onFavorite: PropTypes.func.isRequired,
+  favourites: PropTypes.array.isRequired,
 };

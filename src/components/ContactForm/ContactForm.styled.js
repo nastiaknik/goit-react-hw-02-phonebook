@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Field } from 'formik';
+import { Field, Form as FormikForm } from 'formik';
 
-export const FormContainer = styled.div`
+export const Form = styled(FormikForm)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,13 +32,6 @@ export const StyledField = styled(Field)`
   :focus {
     outline: 1px solid #7286d3;
   }
-  /* :focus ~ label,
-  :not(:placeholder-shown) ~ label {
-    top: -8px;
-    font-size: 12px;
-    background-color: white;
-    opacity: 1; 
-  }*/
 `;
 
 export const Button = styled.button`
